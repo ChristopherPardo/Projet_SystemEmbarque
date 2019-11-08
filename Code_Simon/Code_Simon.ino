@@ -7,44 +7,55 @@
 
 #include <Bounce2.h>
 
+#define BluePin 2
+#define YellowPin 3
+#define RedPin 4
+#define GreenPin 5
+
+#define BlueBtnPin A2
+#define YellowBtnPin A3
+#define RedBtnPin A4
+#define GreenBtnPin A5
+
 // Declare and Initialize global variables. 
 int ledState_1 = LOW;
 int ledState_2 = LOW;
 int ledState_3 = LOW;
 int ledState_4 = LOW;
 
+
 // Instantiate a four Bounce object
-Bounce debouncer_1 = Bounce(); 
-Bounce debouncer_2 = Bounce(); 
-Bounce debouncer_3 = Bounce(); 
-Bounce debouncer_4 = Bounce();
+Bounce BlueBtn = Bounce(); 
+Bounce YellowBtn = Bounce(); 
+Bounce RedBtn = Bounce(); 
+Bounce GreenBtn = Bounce();
 
 int points = 0;
  
 void setup() {
   // put your setup code here, to run once:
-  debouncer_1.attach(8,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
-  debouncer_1.interval(25); // Use a debounce interval of 25 milliseconds
+  BlueBtn.attach(BlueBtnPin,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
+  BlueBtn.interval(25); // Use a debounce interval of 25 milliseconds
 
-  debouncer_2.attach(9,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
-  debouncer_2.interval(25); // Use a debounce interval of 25 milliseconds
+  YellowBtn.attach(YellowBtnPin,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
+  YellowBtn.interval(25); // Use a debounce interval of 25 milliseconds
 
-  debouncer_3.attach(10,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
-  debouncer_3.interval(25); // Use a debounce interval of 25 milliseconds
+  RedBtn.attach(RedBtnPin,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
+  RedBtn.interval(25); // Use a debounce interval of 25 milliseconds
 
-  debouncer_4.attach(11,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
-  debouncer_4.interval(25); // Use a debounce interval of 25 milliseconds
+  GreenBtn.attach(GreenBtnPin,INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
+  GreenBtn.interval(25); // Use a debounce interval of 25 milliseconds
   
     
-  pinMode(2,OUTPUT); // Setup the LED
-  pinMode(3,OUTPUT); // Setup the LED
-  pinMode(4,OUTPUT); // Setup the LED
-  pinMode(5,OUTPUT); // Setup the LED
+  pinMode(BluePin,OUTPUT); // Setup the LED
+  pinMode(YellowPin,OUTPUT); // Setup the LED
+  pinMode(RedPin,OUTPUT); // Setup the LED
+  pinMode(GreenPin,OUTPUT); // Setup the LED
   
-  digitalWrite(2,ledState_1); // Apply LED state
+  /*digitalWrite(2,ledState_1); // Apply LED state
   digitalWrite(3,ledState_2); // Apply LED state
   digitalWrite(4,ledState_3); // Apply LED state
-  digitalWrite(5,ledState_4); // Apply LED state
+  digitalWrite(5,ledState_4); // Apply LED state*/
 }
 
 void JingleBegin(){
@@ -55,18 +66,53 @@ void JingleEnd(){
 
 }
 
+void ButtonsGame(char Color){
+  long Just = random(1,5);
+  if(){
+    
+  }
+}
+
+
+
 void loop() {
   // put your main code here, to run repeatedly:
   JingleBegin();
   do{
-    debouncer_1.update();          // Update the Bounce instance
-    debouncer_2.update();          // Update the Bounce instance
-    debouncer_3.update();          // Update the Bounce instance
-    debouncer_4.update();          // Update the Bounce instance
-    
-    if(deboucer_1.fell()){
-      
+    BlueBtn.update();          // Update the Bounce instance
+    YellowBtn.update();          // Update the Bounce instance
+    RedBtn.update();          // Update the Bounce instance
+    GreenBtn.update();          // Update the Bounce instance
+
+    if(BlueBtn.fell()){
+     digitalWrite(BluePin,HIGH);
     }
+    if(BlueBtn.rose()){
+      digitalWrite(BluePin,LOW);
+    }
+    if(YellowBtn.fell()){
+      digitalWrite(YellowPin,HIGH);
+    }
+    if(YellowBtn.rose()){
+      digitalWrite(YellowPin,LOW);
+    }
+    if(RedBtn.fell()){
+      digitalWrite(RedPin,HIGH);
+    }
+    if(RedBtn.rose()){
+      digitalWrite(RedPin,LOW);
+    }
+    if(GreenBtn.fell()){
+      digitalWrite(GreenPin,HIGH);
+    }
+    if(GreenBtn.rose()){
+      digitalWrite(GreenPin,LOW);
+    }
+    /*else{
+      for(int i = 2;i <= 5;i++){
+        digitalWrite(i,LOW);
+      }
+    }*/
     points++;
-  }while(points < 30)
+  }while(points < 31);
 }
