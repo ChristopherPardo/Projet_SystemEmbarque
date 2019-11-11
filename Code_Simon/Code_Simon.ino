@@ -66,11 +66,18 @@ void JingleEnd(){
 
 }
 
-void ButtonsGame(char Color){
+/*void ButtonsGame(char Color){
   long Just = random(1,5);
   if(){
     
   }
+}*/
+
+void BlueAndNoteON(){
+  digitalWrite(BluePin,HIGH);
+}
+void BlueAndNoteOFF(){
+  digitalWrite(BluePin,LOW);
 }
 
 
@@ -85,10 +92,10 @@ void loop() {
     GreenBtn.update();          // Update the Bounce instance
 
     if(BlueBtn.fell()){
-     digitalWrite(BluePin,HIGH);
+     BlueAndNoteON();
     }
     if(BlueBtn.rose()){
-      digitalWrite(BluePin,LOW);
+      BlueAndNoteOFF();
     }
     if(YellowBtn.fell()){
       digitalWrite(YellowPin,HIGH);
