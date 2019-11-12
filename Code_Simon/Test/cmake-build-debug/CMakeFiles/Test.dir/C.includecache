@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/Repositories_GitHub/Projet_SystemEmbarque/Code_Simon/Test/main.c
+stdio.h
+-
+Bounce2.h
+-
+

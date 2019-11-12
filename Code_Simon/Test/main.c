@@ -1,6 +1,7 @@
-/* Project : Simon_ProjetSystemEmbarqué
+#include <stdio.h>
+/* Project : Simon
  * Autor : Christopher Pardo
- * Date : 13.11.2019
+ * Date : 04.11.2019
  * Version : 1.0
  * Description :
  */
@@ -65,23 +66,20 @@ void setup() {
 
 // code qui devient de + en + long
 void Code() {
-    for (int j = 0; j <= points; j++) {
+    for (int j; j <= points; j++) {
         if (series[j] == 1) {
             BlueAndNoteON();
-            delay(600);
         }
         if (series[j] == 2) {
             digitalWrite(YellowPin, HIGH);
-            delay(600);
         }
         if (series[j] == 3) {
             digitalWrite(RedPin, HIGH);
-            delay(600);
         }
         if (series[j] == 4) {
             digitalWrite(GreenPin, HIGH);
-            delay(600);
         }
+        delay(600);
         for (int k = 2; k <= 5; k++) {
             digitalWrite(k, LOW);
             /*if(series[j] == k-1){
@@ -126,10 +124,10 @@ void BlueAndNoteOFF() {
 void loop() {
     // put your main code here, to run repeatedly:
     JingleBegin();
-    while (1){
-        Code();
+    Code();
+    do {
         for (int i; i <= points + 1; i++) {
-            while (touch == 0){
+            do {
                 BlueBtn.update();          // Update the Bounce instance
                 YellowBtn.update();          // Update the Bounce instance
                 RedBtn.update();          // Update the Bounce instance
@@ -139,30 +137,30 @@ void loop() {
                 }
                 if (BlueBtn.rose()) {
                     BlueAndNoteOFF();
-                    //touch = 1;
+                    touch = 1;
                 }
                 if (YellowBtn.fell()) {
                     digitalWrite(YellowPin, HIGH);
                 }
                 if (YellowBtn.rose()) {
                     digitalWrite(YellowPin, LOW);
-                    //touch = 2;
+                    touch = 2;
                 }
                 if (RedBtn.fell()) {
                     digitalWrite(RedPin, HIGH);
                 }
                 if (RedBtn.rose()) {
                     digitalWrite(RedPin, LOW);
-                    //touch = 3;
+                    touch = 3;
                 }
                 if (GreenBtn.fell()) {
                     digitalWrite(GreenPin, HIGH);
                 }
                 if (GreenBtn.rose()) {
                     digitalWrite(GreenPin, LOW);
-                    //touch = 4;
+                    touch = 4;
                 }
-            }
+            } while (touch == 0);
             if (touch > 0) {
                 if (touch == series[i]) {
                     touch = 0;
@@ -177,5 +175,6 @@ void loop() {
             points = 0;
             JingleEnd();
         }
-    }
+    } while (1);
+
 }
