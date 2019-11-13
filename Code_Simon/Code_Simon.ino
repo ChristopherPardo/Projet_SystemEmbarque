@@ -30,7 +30,7 @@ Bounce YellowBtn = Bounce();
 Bounce RedBtn = Bounce();
 Bounce GreenBtn = Bounce();
 
-int points = 0;
+int points = 1;
 int touch = 0;
 int tour = 0;
 int series[] = {1, 2, 3, 4, 1, 2, 3, 4};
@@ -67,7 +67,7 @@ void setup() {
 
 // code qui devient de + en + long
 void Code() {
-    for (int j = 0; j <= points ; j++) {
+    for (int j = 0; j <= points -1; j++) {
         if (series[j] == 1) {
             BlueAndNoteON();
             delay(600);
@@ -103,11 +103,11 @@ void JingleBegin() {
 }
 
 void JingleEnd() {
-  Serial.print("gagné");
+    Serial.print("gagné");
 }
 
 void JigleLose() {
-  Serial.print("perdu");
+    Serial.print("perdu");
 }
 
 /*void ButtonsGame(char Color){
@@ -129,15 +129,17 @@ void BlueAndNoteOFF() {
 void loop() {
     // put your main code here, to run repeatedly:
     JingleBegin();
-    while (1){
+    while (1) {
         Code();
         for (int i = 0; i <= points; i++) {
-            while (touch == 0){
+          Serial.print(i);
+          Serial.print(series[i]);
+            while (touch == 0) {
                 BlueBtn.update();          // Update the Bounce instance
                 YellowBtn.update();          // Update the Bounce instance
                 RedBtn.update();          // Update the Bounce instance
                 GreenBtn.update();          // Update the Bounce instance
-                
+
                 if (BlueBtn.fell()) {
                     BlueAndNoteON();
                 }
@@ -168,18 +170,18 @@ void loop() {
                 }
             }
             if (touch != series[i]) {
-              JigleLose();
-            }
-            else{
-              tour++;
+                JigleLose();
+            } else {
+                tour++;
             }
         }
         touch = 0;
         Serial.print(points);
-        if (tour -1  == points) {
-          tour = 0;
-          points++;
-          Serial.print("points+");
+        if (tour  == points +1) {
+            tour = 0;
+            points++;
+            Serial.print("juste");
+            delay(600);
         }
         if (points == 7) {
             Serial.print("SS");

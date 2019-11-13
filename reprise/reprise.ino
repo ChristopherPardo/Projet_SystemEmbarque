@@ -1,6 +1,6 @@
 /* Project : Simon_ProjetSystemEmbarqué
  * Autor : Christopher Pardo
- * Date : 13.11.2019
+ * Date : 14.11.2019
  * Version : 1.0
  * Description :
  */
@@ -16,6 +16,8 @@
 #define YellowBtnPin A3
 #define RedBtnPin A4
 #define GreenBtnPin A5
+
+#define MaxTurns 7
 
 // Declare and Initialize global variables.
 int ledState_1 = LOW;
@@ -68,6 +70,7 @@ void setup() {
 // code qui devient de + en + long
 void Code() {
     for (int j = 0; j < points; j++) {
+        //Serial.print(j);
         if (series[j] == 1) {
             BlueAndNoteON();
             delay(600);
@@ -87,7 +90,6 @@ void Code() {
         for (int k = 2; k <= 5; k++) {
             digitalWrite(k, LOW);
         }
-        Serial.print("entré\n");
     }
 }
 
@@ -124,5 +126,66 @@ void loop() {
     JingleBegin();
     while (1) {
         Code();
+        for (int i = 0; i < points; i++){
+                //Serial.print(i);
+          while (touch == 0){
+                BlueBtn.update();          // Update the Bounce instance
+                YellowBtn.update();          // Update the Bounce instance
+                RedBtn.update();          // Update the Bounce instance
+                GreenBtn.update();          // Update the Bounce instance
+
+                if (BlueBtn.fell()) {
+                    BlueAndNoteON();
+                }
+                if (BlueBtn.rose()) {
+                    BlueAndNoteOFF();
+                    touch = 1;
+                }
+                if (YellowBtn.fell()) {
+                    digitalWrite(YellowPin, HIGH);
+                }
+                if (YellowBtn.rose()) {
+                    digitalWrite(YellowPin, LOW);
+                    touch = 2;
+                }
+                if (RedBtn.fell()) {
+                    digitalWrite(RedPin, HIGH);
+                }
+                if (RedBtn.rose()) {
+                    digitalWrite(RedPin, LOW);
+                    touch = 3;
+                }
+                if (GreenBtn.fell()) {
+                    digitalWrite(GreenPin, HIGH);
+                }
+                if (GreenBtn.rose()) {
+                    digitalWrite(GreenPin, LOW);
+                    touch = 4;
+                }
+          }
+          Serial.print(series[i]);
+          Serial.print(touch);
+          if (touch != series[i]) {
+                JigleLose();
+                delay(1000000);
+          }
+          else {
+            tour++;
+          }
+          touch = 0;
+        }
+        //Serial.print("sorti");
+        if(tour == points){
+          //Serial.print("c'esttoutbon");
+          points++;
+          tour = 0;
+          delay(600);
+          Serial.print("\n");
+          Serial.print(points);
+          Serial.print("\n");
+        }
+        if(points == MaxTurns){
+          JingleEnd();
+        }
     }
 }
