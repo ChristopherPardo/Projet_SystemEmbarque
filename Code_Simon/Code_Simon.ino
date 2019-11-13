@@ -32,7 +32,7 @@ Bounce GreenBtn = Bounce();
 
 int points = 0;
 int touch = 0;
-int tours = 1;
+int tour = 0;
 int series[] = {1, 2, 3, 4, 1, 2, 3, 4};
 
 void setup() {
@@ -60,12 +60,14 @@ void setup() {
     digitalWrite(4,ledState_3); // Apply LED state
     digitalWrite(5,ledState_4); // Apply LED state*/
 
+    Serial.begin(9600);
+
 
 }
 
 // code qui devient de + en + long
 void Code() {
-    for (int j = 0; j <= points; j++) {
+    for (int j = 0; j <= points ; j++) {
         if (series[j] == 1) {
             BlueAndNoteON();
             delay(600);
@@ -92,6 +94,7 @@ void Code() {
              *
             */
         }
+        Serial.print("entré\n");
     }
 }
 
@@ -100,11 +103,11 @@ void JingleBegin() {
 }
 
 void JingleEnd() {
-
+  Serial.print("gagné");
 }
 
 void JigleLose() {
-
+  Serial.print("perdu");
 }
 
 /*void ButtonsGame(char Color){
@@ -128,52 +131,58 @@ void loop() {
     JingleBegin();
     while (1){
         Code();
-        for (int i; i <= points + 1; i++) {
+        for (int i = 0; i <= points; i++) {
             while (touch == 0){
                 BlueBtn.update();          // Update the Bounce instance
                 YellowBtn.update();          // Update the Bounce instance
                 RedBtn.update();          // Update the Bounce instance
                 GreenBtn.update();          // Update the Bounce instance
+                
                 if (BlueBtn.fell()) {
                     BlueAndNoteON();
                 }
                 if (BlueBtn.rose()) {
                     BlueAndNoteOFF();
-                    //touch = 1;
+                    touch = 1;
                 }
                 if (YellowBtn.fell()) {
                     digitalWrite(YellowPin, HIGH);
                 }
                 if (YellowBtn.rose()) {
                     digitalWrite(YellowPin, LOW);
-                    //touch = 2;
+                    touch = 2;
                 }
                 if (RedBtn.fell()) {
                     digitalWrite(RedPin, HIGH);
                 }
                 if (RedBtn.rose()) {
                     digitalWrite(RedPin, LOW);
-                    //touch = 3;
+                    touch = 3;
                 }
                 if (GreenBtn.fell()) {
                     digitalWrite(GreenPin, HIGH);
                 }
                 if (GreenBtn.rose()) {
                     digitalWrite(GreenPin, LOW);
-                    //touch = 4;
+                    touch = 4;
                 }
             }
-            if (touch > 0) {
-                if (touch == series[i]) {
-                    touch = 0;
-                    if (i == points) {
-                        points++;
-                    }
-                }
-                JigleLose();
+            if (touch != series[i]) {
+              JigleLose();
+            }
+            else{
+              tour++;
             }
         }
-        if (points == 31) {
+        touch = 0;
+        Serial.print(points);
+        if (tour -1  == points) {
+          tour = 0;
+          points++;
+          Serial.print("points+");
+        }
+        if (points == 7) {
+            Serial.print("SS");
             points = 0;
             JingleEnd();
         }
