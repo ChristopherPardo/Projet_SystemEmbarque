@@ -2,31 +2,26 @@
  * Autor : Christopher Pardo
  * Date : 15.11.2019
  * Version : 1.0
- * Description :
+ * Description : Simon Game for a project of CPNV
  */
 
 #include <Bounce2.h>
-#include<time.h>
 
+// Difine the LEDs
 #define BluePin 2
 #define YellowPin 3
 #define RedPin 4
 #define GreenPin 5
 
-#define buzzer 6
+#define buzzer 6 // Difine the buzzer
 
+// Difine the Buttons
 #define BlueBtnPin A2
 #define YellowBtnPin A3
 #define RedBtnPin A4
 #define GreenBtnPin A5
 
-#define MaxTurns 32
-
-// Declare and Initialize global variables.
-int ledState_1 = LOW;
-int ledState_2 = LOW;
-int ledState_3 = LOW;
-int ledState_4 = LOW;
+#define MaxTurns 32  // Max turns of the game for winning
 
 
 // Instantiate a four Bounce object
@@ -35,10 +30,9 @@ Bounce YellowBtn = Bounce();
 Bounce RedBtn = Bounce();
 Bounce GreenBtn = Bounce();
 
-int points = 1;
-int touch = 0;
-int series[MaxTurns - 1];
-float NOTE[] = {329.63, 261.63, 220, 164.81, 65.41};  //table for note
+int points = 1;           // Nubers of Turn of play
+int series[MaxTurns - 1];  // Serie of code
+float NOTE[] = {329.63, 261.63, 220, 164.81, 65.41};  // Table for the notes
 
 void setup() {
     // put your setup code here, to run once:
@@ -54,15 +48,16 @@ void setup() {
     GreenBtn.attach(GreenBtnPin, INPUT_PULLUP); // Attach the debouncer to a pin with INPUT_PULLUP mode
     GreenBtn.interval(25); // Use a debounce interval of 25 milliseconds
 
+    //Setup the LED
+    pinMode(BluePin, OUTPUT);
+    pinMode(YellowPin, OUTPUT);
+    pinMode(RedPin, OUTPUT);
+    pinMode(GreenPin, OUTPUT);
 
-    pinMode(BluePin, OUTPUT); // Setup the LED
-    pinMode(YellowPin, OUTPUT); // Setup the LED
-    pinMode(RedPin, OUTPUT); // Setup the LED
-    pinMode(GreenPin, OUTPUT); // Setup the LED
-
-    randomSeed(analogRead(0));
+    randomSeed(analogRead(0));  // Find randoms Nubers
 }
 
+// Put random values in "Serie"
 void SerieNumbers() {
     for (int i = 0; i <= MaxTurns; i++) {
         int valrandom = random(1, 5);
@@ -70,6 +65,7 @@ void SerieNumbers() {
     }
 }
 
+// The serie of lights and Notes
 void Code() {
     for (int j = 0; j < points; j++) {
         for (int k = 1; k <= 4; k++) {
@@ -83,6 +79,7 @@ void Code() {
     }
 }
 
+// A jingle of Begining start
 void JingleBegin() {
     LedAndNotesON(1);
     delay(100);
@@ -110,6 +107,7 @@ void JingleBegin() {
     delay(1000);
 }
 
+// A jingle of end start
 void JingleEnd() {
     LedAndNotesON(3);
     delay(100);
@@ -136,8 +134,9 @@ void JingleEnd() {
     LedAndNotesOFF(3);
 }
 
-
+// Turn on the leds and the note
 void LedAndNotesON(int color) {
+  
     if (color == 1) {
         digitalWrite(BluePin, HIGH);
         tone(buzzer, NOTE[0]);
@@ -156,6 +155,7 @@ void LedAndNotesON(int color) {
     }
 }
 
+// Turn off the leds
 void LedAndNotesOFF(int color) {
     if (color == 1) {
         digitalWrite(BluePin, LOW);
@@ -172,6 +172,7 @@ void LedAndNotesOFF(int color) {
     noTone(buzzer);
 }
 
+// Update of bounce
 void BtsUpdate() {
     BlueBtn.update();         // Update the Bounce instance
     YellowBtn.update();       // Update the Bounce instance
@@ -182,67 +183,68 @@ void BtsUpdate() {
 
 void loop() {
     // put your main code here, to run repeatedly:
-    BtsUpdate();
-    SerieNumbers();
-    if (BlueBtn.rose()) {
-        JingleBegin();
+    int touch = 0;          // Button pushed
+    BtsUpdate();            // Update of bounce
+    SerieNumbers();         // Put random values in "Serie"
+    if (BlueBtn.rose()) {   // The player have to push BlueBtn for starting
+        JingleBegin();    // A jingle of Begining start
         while (1) {
-            bool lose = false;
-            Code();
-            for (int i = 0; i < points; i++) {
-                Serial.print(series[i]);
+            bool lose = false;  // If the game is lost
+            Code();              // The serie of lights and Notes
+            for (int i = 0; i < points; i++) { // Turn
                 while (touch == 0) {
                     BtsUpdate();
 
                     if (BlueBtn.fell()) {
-                        LedAndNotesON(1);
+                        LedAndNotesON(1); // Turn on the blue leds and the note
                     }
                     if (BlueBtn.rose()) {
-                        LedAndNotesOFF(1);
+                        LedAndNotesOFF(1); // Turn off the leds and the note
                         touch = 1;
                     }
                     if (YellowBtn.fell()) {
-                        LedAndNotesON(2);
+                        LedAndNotesON(2); // Turn on the Yellow leds and the note
                     }
                     if (YellowBtn.rose()) {
-                        LedAndNotesOFF(2);
+                        LedAndNotesOFF(2); // Turn off the leds and the note
                         touch = 2;
                     }
                     if (RedBtn.fell()) {
-                        LedAndNotesON(3);
+                        LedAndNotesON(3); // Turn on the red leds and the note
                     }
                     if (RedBtn.rose()) {
-                        LedAndNotesOFF(3);
+                        LedAndNotesOFF(3); // Turn off the leds and the note
                         touch = 3;
                     }
                     if (GreenBtn.fell()) {
-                        LedAndNotesON(4);
+                        LedAndNotesON(4); // Turn on the Green leds and the note
                     }
                     if (GreenBtn.rose()) {
-                        LedAndNotesOFF(4);
+                        LedAndNotesOFF(4); // Turn off the leds and the note
                         touch = 4;
                     }
                 }
-                Serial.print("entré");
                 if (touch != series[i]) {
-                    Serial.print("sortie");
+                       // Game over
+                       // Restart the parameters for restart
                     points = 1;
                     touch = 0;
                     lose = true;
                     tone(buzzer, NOTE[4], 800);
                     delay(800);
-                    JingleBegin();
+                    JingleBegin(); // A jingle of Begining start
                     break;
                 }
                 touch = 0;
             }
             if (lose == false) {
-                //Serial.print("c'esttoutbon");
+                   // Add one of the serie
                 points++;
                 delay(600);
             }
             if (points == MaxTurns) {
-                JingleEnd();
+                   // End game
+                JingleEnd(); // A jingle of Begining start
                 points = 1;
                 break;
             }
