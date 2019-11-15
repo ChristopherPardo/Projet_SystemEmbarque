@@ -1,21 +1,26 @@
 /* Project : Simon_ProjetSystemEmbarqué
  * Autor : Christopher Pardo
- * Date : 13.11.2019
+ * Date : 15.11.2019
  * Version : 1.0
  * Description :
  */
 
 #include <Bounce2.h>
+#include<time.h>
 
 #define BluePin 2
 #define YellowPin 3
 #define RedPin 4
 #define GreenPin 5
 
+#define buzzer 6
+
 #define BlueBtnPin A2
 #define YellowBtnPin A3
 #define RedBtnPin A4
 #define GreenBtnPin A5
+
+#define MaxTurns 32
 
 // Declare and Initialize global variables.
 int ledState_1 = LOW;
@@ -32,8 +37,8 @@ Bounce GreenBtn = Bounce();
 
 int points = 1;
 int touch = 0;
-int tour = 0;
-int series[] = {1, 2, 3, 4, 1, 2, 3, 4};
+int series[MaxTurns - 1];
+float NOTE[] = {329.63, 261.63, 220, 164.81, 65.41};  //table for note
 
 void setup() {
     // put your setup code here, to run once:
@@ -55,138 +60,192 @@ void setup() {
     pinMode(RedPin, OUTPUT); // Setup the LED
     pinMode(GreenPin, OUTPUT); // Setup the LED
 
-    /*digitalWrite(2,ledState_1); // Apply LED state
-    digitalWrite(3,ledState_2); // Apply LED state
-    digitalWrite(4,ledState_3); // Apply LED state
-    digitalWrite(5,ledState_4); // Apply LED state*/
-
-    Serial.begin(9600);
-
-
+    randomSeed(analogRead(0));
 }
 
-// code qui devient de + en + long
+void SerieNumbers() {
+    for (int i = 0; i <= MaxTurns; i++) {
+        int valrandom = random(1, 5);
+        series[i] = valrandom;
+    }
+}
+
 void Code() {
-    for (int j = 0; j <= points -1; j++) {
-        if (series[j] == 1) {
-            BlueAndNoteON();
-            delay(600);
+    for (int j = 0; j < points; j++) {
+        for (int k = 1; k <= 4; k++) {
+            if (series[j] == k) {
+                LedAndNotesON(k);
+                delay(600);
+            }
+            LedAndNotesOFF(k);
+            delay(50);
         }
-        if (series[j] == 2) {
-            digitalWrite(YellowPin, HIGH);
-            delay(600);
-        }
-        if (series[j] == 3) {
-            digitalWrite(RedPin, HIGH);
-            delay(600);
-        }
-        if (series[j] == 4) {
-            digitalWrite(GreenPin, HIGH);
-            delay(600);
-        }
-        for (int k = 2; k <= 5; k++) {
-            digitalWrite(k, LOW);
-            /*if(series[j] == k-1){
-             *  digitalWrite(k,HIGH);
-             *  delay(600);
-             *  digitalWrite(k,LOW);
-             *}
-             *
-            */
-        }
-        Serial.print("entré\n");
     }
 }
 
 void JingleBegin() {
-
+    LedAndNotesON(1);
+    delay(100);
+    LedAndNotesOFF(1);
+    delay(200);
+    LedAndNotesON(4);
+    delay(100);
+    LedAndNotesOFF(4);
+    delay(200);
+    LedAndNotesON(1);
+    delay(100);
+    LedAndNotesOFF(1);
+    delay(200);
+    LedAndNotesON(2);
+    delay(100);
+    LedAndNotesOFF(2);
+    delay(200);
+    LedAndNotesON(4);
+    delay(100);
+    LedAndNotesOFF(4);
+    delay(200);
+    LedAndNotesON(3);
+    delay(100);
+    LedAndNotesOFF(3);
+    delay(1000);
 }
 
 void JingleEnd() {
-    Serial.print("gagné");
+    LedAndNotesON(3);
+    delay(100);
+    LedAndNotesOFF(3);
+    delay(200);
+    LedAndNotesON(4);
+    delay(100);
+    LedAndNotesOFF(4);
+    delay(200);
+    LedAndNotesON(2);
+    delay(100);
+    LedAndNotesOFF(2);
+    delay(200);
+    LedAndNotesON(1);
+    delay(100);
+    LedAndNotesOFF(1);
+    delay(200);
+    LedAndNotesON(4);
+    delay(100);
+    LedAndNotesOFF(4);
+    delay(200);
+    LedAndNotesON(3);
+    delay(100);
+    LedAndNotesOFF(3);
 }
 
-void JigleLose() {
-    Serial.print("perdu");
+
+void LedAndNotesON(int color) {
+    if (color == 1) {
+        digitalWrite(BluePin, HIGH);
+        tone(buzzer, NOTE[0]);
+    }
+    if (color == 2) {
+        digitalWrite(YellowPin, HIGH);
+        tone(buzzer, NOTE[1]);
+    }
+    if (color == 3) {
+        digitalWrite(RedPin, HIGH);
+        tone(buzzer, NOTE[2]);
+    }
+    if (color == 4) {
+        digitalWrite(GreenPin, HIGH);
+        tone(buzzer, NOTE[3]);
+    }
 }
 
-/*void ButtonsGame(char Color){
-  long Just = random(1,5);
-  if(){
-
-  }
-}*/
-
-void BlueAndNoteON() {
-    digitalWrite(BluePin, HIGH);
+void LedAndNotesOFF(int color) {
+    if (color == 1) {
+        digitalWrite(BluePin, LOW);
+    }
+    if (color == 2) {
+        digitalWrite(YellowPin, LOW);
+    }
+    if (color == 3) {
+        digitalWrite(RedPin, LOW);
+    }
+    if (color == 4) {
+        digitalWrite(GreenPin, LOW);
+    }
+    noTone(buzzer);
 }
 
-void BlueAndNoteOFF() {
-    digitalWrite(BluePin, LOW);
+void BtsUpdate() {
+    BlueBtn.update();         // Update the Bounce instance
+    YellowBtn.update();       // Update the Bounce instance
+    RedBtn.update();          // Update the Bounce instance
+    GreenBtn.update();        // Update the Bounce instance
 }
 
 
 void loop() {
     // put your main code here, to run repeatedly:
-    JingleBegin();
-    while (1) {
-        Code();
-        for (int i = 0; i <= points; i++) {
-          Serial.print(i);
-          Serial.print(series[i]);
-            while (touch == 0) {
-                BlueBtn.update();          // Update the Bounce instance
-                YellowBtn.update();          // Update the Bounce instance
-                RedBtn.update();          // Update the Bounce instance
-                GreenBtn.update();          // Update the Bounce instance
+    BtsUpdate();
+    SerieNumbers();
+    if (BlueBtn.rose()) {
+        JingleBegin();
+        while (1) {
+            bool lose = false;
+            Code();
+            for (int i = 0; i < points; i++) {
+                Serial.print(series[i]);
+                while (touch == 0) {
+                    BtsUpdate();
 
-                if (BlueBtn.fell()) {
-                    BlueAndNoteON();
+                    if (BlueBtn.fell()) {
+                        LedAndNotesON(1);
+                    }
+                    if (BlueBtn.rose()) {
+                        LedAndNotesOFF(1);
+                        touch = 1;
+                    }
+                    if (YellowBtn.fell()) {
+                        LedAndNotesON(2);
+                    }
+                    if (YellowBtn.rose()) {
+                        LedAndNotesOFF(2);
+                        touch = 2;
+                    }
+                    if (RedBtn.fell()) {
+                        LedAndNotesON(3);
+                    }
+                    if (RedBtn.rose()) {
+                        LedAndNotesOFF(3);
+                        touch = 3;
+                    }
+                    if (GreenBtn.fell()) {
+                        LedAndNotesON(4);
+                    }
+                    if (GreenBtn.rose()) {
+                        LedAndNotesOFF(4);
+                        touch = 4;
+                    }
                 }
-                if (BlueBtn.rose()) {
-                    BlueAndNoteOFF();
-                    touch = 1;
+                Serial.print("entré");
+                if (touch != series[i]) {
+                    Serial.print("sortie");
+                    points = 1;
+                    touch = 0;
+                    lose = true;
+                    tone(buzzer, NOTE[4], 800);
+                    delay(800);
+                    JingleBegin();
+                    break;
                 }
-                if (YellowBtn.fell()) {
-                    digitalWrite(YellowPin, HIGH);
-                }
-                if (YellowBtn.rose()) {
-                    digitalWrite(YellowPin, LOW);
-                    touch = 2;
-                }
-                if (RedBtn.fell()) {
-                    digitalWrite(RedPin, HIGH);
-                }
-                if (RedBtn.rose()) {
-                    digitalWrite(RedPin, LOW);
-                    touch = 3;
-                }
-                if (GreenBtn.fell()) {
-                    digitalWrite(GreenPin, HIGH);
-                }
-                if (GreenBtn.rose()) {
-                    digitalWrite(GreenPin, LOW);
-                    touch = 4;
-                }
+                touch = 0;
             }
-            if (touch != series[i]) {
-                JigleLose();
-            } else {
-                tour++;
+            if (lose == false) {
+                //Serial.print("c'esttoutbon");
+                points++;
+                delay(600);
             }
-        }
-        touch = 0;
-        Serial.print(points);
-        if (tour  == points +1) {
-            tour = 0;
-            points++;
-            Serial.print("juste");
-            delay(600);
-        }
-        if (points == 7) {
-            Serial.print("SS");
-            points = 0;
-            JingleEnd();
+            if (points == MaxTurns) {
+                JingleEnd();
+                points = 1;
+                break;
+            }
         }
     }
 }

@@ -70,7 +70,7 @@ void setup() {
 // code qui devient de + en + long
 void Code() {
     for (int j = 0; j < points; j++) {
-        //Serial.print(j);
+        Serial.print("entré");
         if (series[j] == 1) {
             BlueAndNoteON();
             delay(600);
@@ -120,19 +120,26 @@ void BlueAndNoteOFF() {
     digitalWrite(BluePin, LOW);
 }
 
+void BtsUpdate(){
+    BlueBtn.update();         // Update the Bounce instance
+    YellowBtn.update();       // Update the Bounce instance
+    RedBtn.update();          // Update the Bounce instance
+    GreenBtn.update();        // Update the Bounce instance
+}
+
 
 void loop() {
     // put your main code here, to run repeatedly:
+    BtsUpdate();
+    if(BlueBtn.rose()){
     JingleBegin();
     while (1) {
+        bool lose = false;
         Code();
         for (int i = 0; i < points; i++){
                 //Serial.print(i);
           while (touch == 0){
-                BlueBtn.update();          // Update the Bounce instance
-                YellowBtn.update();          // Update the Bounce instance
-                RedBtn.update();          // Update the Bounce instance
-                GreenBtn.update();          // Update the Bounce instance
+                BtsUpdate();
 
                 if (BlueBtn.fell()) {
                     BlueAndNoteON();
@@ -167,7 +174,11 @@ void loop() {
           Serial.print(touch);
           if (touch != series[i]) {
                 JigleLose();
-                delay(1000000);
+                points = 1;
+                touch = 0;
+                lose = true;
+                delay(300);
+                break;
           }
           else {
             tour++;
@@ -175,10 +186,10 @@ void loop() {
           touch = 0;
         }
         //Serial.print("sorti");
-        if(tour == points){
+         tour = 0;
+        if(lose == false){
           //Serial.print("c'esttoutbon");
           points++;
-          tour = 0;
           delay(600);
           Serial.print("\n");
           Serial.print(points);
@@ -186,6 +197,8 @@ void loop() {
         }
         if(points == MaxTurns){
           JingleEnd();
+          points = 1;
         }
+    }
     }
 }
